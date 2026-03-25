@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Visite Parentale - Robot Humanoïde Porteur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg-dark: #000000;
+            --card-bg: rgba(255, 255, 255, 0.03 );
+            --card-border: rgba(255, 255, 255, 0.1);
+            --card-hover: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark);
+            color: #fff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'Courier Prime', monospace;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .glass-card:hover {
+            background: var(--card-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Hero Gradient */
+        .hero-gradient {
+            background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+        }
+
+        /* Tabs Styling */
+        .tab-btn {
+            position: relative;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: #fff;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #fff;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.45rem;
+            top: 1.5rem;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            background: var(--bg-dark);
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10 p-4 md:p-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i data-lucide="heart" class="text-white w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-[0.2em] uppercase font-mono leading-none">Visite Parentale</h1>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Robot Humanoïde Porteur</p>
+                </div>
+            </div>
+            <div class="text-right hidden sm:block">
+                <p class="text-sm text-gray-400 font-mono">Semaine 32</p>
+                <p class="text-xs text-red-500 font-medium">Développement optimal</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-8 space-y-10">
+        <!-- Hero Section -->
+        <section class="relative h-[300px] md:h-[400px] rounded-3xl overflow-hidden group">
+            <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663276430149/bk87JJfuhQMEWGw6pG3jQT/hero-robot-medical-oXkTBbaMqRHft3FdLUc99t.webp" 
+                 alt="Robot Medical" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute inset-0 hero-gradient flex flex-col justify-center p-8 md:p-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4 font-mono tracking-tight">Suivi de Développement</h2>
+                <p class="text-gray-400 max-w-md text-sm md:text-base leading-relaxed">
+                    Monitoring continu de la santé et du développement fœtal via technologie avancée.
+                </p>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex gap-2 border-b border-white/10 sticky top-[88px] bg-black z-40">
+            <button onclick="switchTab('overview' )" id="tab-overview" class="tab-btn active px-6 py-4 text-sm font-medium uppercase tracking-widest">Aperçu</button>
+            <button onclick="switchTab('metrics')" id="tab-metrics" class="tab-btn px-6 py-4 text-sm font-medium uppercase tracking-widest">Métriques</button>
+            <button onclick="switchTab('development')" id="tab-development" class="tab-btn px-6 py-4 text-sm font-medium uppercase tracking-widest">Développement</button>
+        </nav>
+
+        <!-- Tab Content: Overview -->
+        <div id="content-overview" class="tab-content active space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Poids -->
+                <div onclick="switchTab('metrics', 'poids')" class="glass-card p-6 rounded-2xl space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+                            <i data-lucide="weight" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded-full flex items-center gap-1">
+                            <i data-lucide="trending-up" class="w-3 h-3"></i> 0.1
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-mono mb-1">Poids</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold tracking-tighter">2.8</span>
+                            <span class="text-gray-500 font-light">kg</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Croissance régulière du poids fœtal. Évolution positive sur les deux dernières semaines.
+                    </p>
+                </div>
+
+                <!-- Taille -->
+                <div onclick="switchTab('metrics', 'taille')" class="glass-card p-6 rounded-2xl space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400">
+                            <i data-lucide="ruler" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded-full flex items-center gap-1">
+                            <i data-lucide="trending-up" class="w-3 h-3"></i> 0.8
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-mono mb-1">Taille</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold tracking-tighter">38.5</span>
+                            <span class="text-gray-500 font-light">cm</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Développement normal de la taille. Conforme aux standards de développement fœtal.
+                    </p>
+                </div>
+
+                <!-- Rythme Cardiaque -->
+                <div onclick="switchTab('metrics', 'rythme')" class="glass-card p-6 rounded-2xl space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-pink-500/10 rounded-xl text-pink-400">
+                            <i data-lucide="heart-pulse" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-500 bg-white/5 px-2 py-1 rounded-full flex items-center gap-1">
+                            <i data-lucide="minus" class="w-3 h-3"></i> 0.0
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-mono mb-1">Rythme Cardiaque</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold tracking-tighter">145</span>
+                            <span class="text-gray-500 font-light">bpm</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Fréquence cardiaque stable et régulière. Indicateur de bonne santé fœtale.
+                    </p>
+                </div>
+
+                <!-- Température -->
+                <div onclick="switchTab('metrics', 'temp')" class="glass-card p-6 rounded-2xl space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-orange-500/10 rounded-xl text-orange-400">
+                            <i data-lucide="thermometer" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-500 bg-white/5 px-2 py-1 rounded-full flex items-center gap-1">
+                            <i data-lucide="minus" class="w-3 h-3"></i> 0.0
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-mono mb-1">Température</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold tracking-tighter">37.2</span>
+                            <span class="text-gray-500 font-light">°C</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Température maternelle stable. Environnement optimal pour le développement.
+                    </p>
+                </div>
+
+                <!-- Activité Fœtale -->
+                <div onclick="switchTab('metrics', 'activite')" class="glass-card p-6 rounded-2xl space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+                            <i data-lucide="activity" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded-full flex items-center gap-1">
+                            <i data-lucide="trending-up" class="w-3 h-3"></i> 0.3
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-mono mb-1">Activité Fœtale</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold tracking-tighter">8.5</span>
+                            <span class="text-gray-500 font-light">mouv/h</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Augmentation progressive de l'activité fœtale. Développement moteur excellent.
+                    </p>
+                </div>
+
+                <!-- Oxygénation -->
+                <div onclick="switchTab('metrics', 'oxy')" class="glass-card p-6 rounded-2xl space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-green-500/10 rounded-xl text-green-400">
+                            <i data-lucide="zap" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-500 bg-white/5 px-2 py-1 rounded-full flex items-center gap-1">
+                            <i data-lucide="minus" class="w-3 h-3"></i> 0.0
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-mono mb-1">Oxygénation</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold tracking-tighter">98.5</span>
+                            <span class="text-gray-500 font-light">%</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Saturation en oxygène optimale. Circulation sanguine excellente.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bottom Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+                <div class="glass-card p-8 rounded-3xl">
+                    <h3 class="text-xl font-bold mb-8 font-mono tracking-tight">Santé Générale</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                            <span class="text-gray-500 text-sm">État fœtal</span>
+                            <span class="text-green-400 font-bold px-3 py-1 bg-green-400/10 rounded-full text-xs">Excellent</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                            <span class="text-gray-500 text-sm">Croissance</span>
+                            <span class="text-white font-medium">Normale</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500 text-sm">Risques</span>
+                            <span class="text-white font-medium">Aucun détecté</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-8 font-mono tracking-tight">Prochaine Visite</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <p class="text-[10px] text-gray-500 uppercase font-mono">Date prévue</p>
+                                <p class="text-lg font-bold">2 Avril 2026</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[10px] text-gray-500 uppercase font-mono">Heure</p>
+                                <p class="text-lg font-bold">14:30</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 space-y-1">
+                            <p class="text-[10px] text-gray-500 uppercase font-mono">Type d'examen</p>
+                            <p class="text-base font-medium text-gray-300">Échographie complète + Monitoring</p>
+                        </div>
+                    </div>
+                    <button class="mt-10 w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98] uppercase tracking-[0.2em] text-xs">
+                        Programmer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Metrics -->
+        <div id="content-metrics" class="tab-content space-y-8">
+            <div class="glass-card p-8 rounded-3xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <h3 id="metric-title" class="text-2xl font-bold font-mono uppercase tracking-tight">Poids</h3>
+                        <p id="metric-subtitle" class="text-gray-500 text-sm mt-1">Évolution sur les 14 derniers jours</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="updateChart('poids')" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"><i data-lucide="weight" class="w-5 h-5"></i></button>
+                        <button onclick="updateChart('taille')" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"><i data-lucide="ruler" class="w-5 h-5"></i></button>
+                        <button onclick="updateChart('rythme')" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"><i data-lucide="heart-pulse" class="w-5 h-5"></i></button>
+                    </div>
+                </div>
+                <div class="h-[400px] w-full">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Development -->
+        <div id="content-development" class="tab-content space-y-8">
+            <div class="glass-card p-8 rounded-3xl">
+                <h3 class="text-2xl font-bold mb-10 font-mono uppercase tracking-tight">Étapes de Développement</h3>
+                <div class="space-y-2">
+                    <!-- Step 1 -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot text-red-500"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-lg">Semaine 28: Viabilité</h4>
+                                <p class="text-gray-500 text-sm">Capacités sensorielles développées</p>
+                            </div>
+                            <span class="text-[10px] font-bold text-red-500 bg-red-500/10 px-3 py-1 rounded-full uppercase">Complété</span>
+                        </div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot text-blue-500"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-lg">Semaine 32: Prise de poids</h4>
+                                <p class="text-gray-500 text-sm">Accumulation de réserves énergétiques</p>
+                            </div>
+                            <span class="text-[10px] font-bold text-blue-500 bg-blue-500/10 px-3 py-1 rounded-full uppercase">En cours</span>
+                        </div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot text-gray-700"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-400">Semaine 36: Positionnement</h4>
+                                <p class="text-gray-600 text-sm">Préparation pour l'accouchement</p>
+                            </div>
+                            <span class="text-[10px] font-bold text-gray-600 bg-white/5 px-3 py-1 rounded-full uppercase">À venir</span>
+                        </div>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot text-gray-700"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-400">Semaine 40: Terme</h4>
+                                <p class="text-gray-600 text-sm">Développement complet</p>
+                            </div>
+                            <span class="text-[10px] font-bold text-gray-600 bg-white/5 px-3 py-1 rounded-full uppercase">À venir</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-12 border-t border-white/10 text-center">
+        <div class="flex justify-center gap-10 mb-6">
+            <a href="#" class="text-gray-500 hover:text-white transition-colors text-sm font-medium">Documentation</a>
+            <a href="#" class="text-gray-500 hover:text-white transition-colors text-sm font-medium">Support</a>
+            <a href="#" class="text-gray-500 hover:text-white transition-colors text-sm font-medium">Conditions</a>
+        </div>
+        <p class="text-gray-600 text-[10px] uppercase tracking-[0.3em]">Made with Manus &bull; 2026</p>
+    </footer>
+
+    <script>
+        // Initialisation des icônes Lucide
+        lucide.createIcons();
+
+        // Logique de changement d'onglets
+        function switchTab(tabId, metricType = 'poids') {
+            // Mise à jour des boutons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Mise à jour du contenu
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('content-' + tabId).classList.add('active');
+
+            // Si on passe aux métriques, on met à jour le graphique
+            if (tabId === 'metrics') {
+                updateChart(metricType);
+            }
+
+            // Retour en haut de la page en douceur
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Logique Chart.js
+        let myChart = null;
+        const ctx = document.getElementById('metricsChart').getContext('2d');
+
+        const chartData = {
+            poids: {
+                label: 'Poids (kg)',
+                data: [2.1, 2.15, 2.2, 2.3, 2.35, 2.4, 2.5, 2.55, 2.6, 2.65, 2.7, 2.75, 2.8, 2.8],
+                color: '#3b82f6'
+            },
+            taille: {
+                label: 'Taille (cm)',
+                data: [35, 35.5, 36, 36.2, 36.5, 36.8, 37, 37.3, 37.5, 37.8, 38, 38.2, 38.4, 38.5],
+                color: '#6366f1'
+            },
+            rythme: {
+                label: 'Rythme Cardiaque (bpm)',
+                data: [142, 145, 144, 146, 145, 143, 145, 147, 145, 144, 146, 145, 145, 145],
+                color: '#ec4899'
+            },
+            temp: {
+                label: 'Température (°C)',
+                data: [37.1, 37.2, 37.2, 37.1, 37.2, 37.3, 37.2, 37.2, 37.1, 37.2, 37.2, 37.2, 37.2, 37.2],
+                color: '#f97316'
+            },
+            activite: {
+                label: 'Activité (mouv/h)',
+                data: [6, 6.5, 7, 7.2, 7.5, 7.8, 8, 8.2, 8.3, 8.4, 8.5, 8.5, 8.5, 8.5],
+                color: '#a855f7'
+            },
+            oxy: {
+                label: 'Oxygénation (%)',
+                data: [98, 98.5, 98.2, 98.5, 98.5, 98.4, 98.5, 98.6, 98.5, 98.5, 98.5, 98.5, 98.5, 98.5],
+                color: '#22c55e'
+            }
+        };
+
+        function updateChart(type) {
+            const config = chartData[type];
+            
+            // Mise à jour du titre
+            const titles = {
+                poids: 'Poids Fœtal',
+                taille: 'Taille Fœtale',
+                rythme: 'Rythme Cardiaque',
+                temp: 'Température Maternelle',
+                activite: 'Activité Fœtale',
+                oxy: 'Oxygénation'
+            };
+            document.getElementById('metric-title').innerText = titles[type];
+            
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 14}, (_, i) => 'Jour ' + (i + 1)),
+                    datasets: [{
+                        label: config.label,
+                        data: config.data,
+                        borderColor: config.color,
+                        backgroundColor: config.color + '20',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: config.color
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#666' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#666' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chargement initial
+        updateChart('poids');
+    </script>
+</body>
+</html>
